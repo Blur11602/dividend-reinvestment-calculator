@@ -10,17 +10,15 @@ loop = True
 while loop == True:
 	try:
 		print(f"\nAttempt {attempt}")
-		price = float(input("Enter the current price of the stock ($):\n > "))
-		dividend = float(input("Enter the current dividend yield (%):\n > "))
+		price = float(input("Enter the current price of the stock (in $):\n > "))
+		dividend = float(input("Enter the current dividend yield (as a %):\n > "))
 		shares = float(input("Enter the number of shares you own:\n > "))
 		loop = False
 	except Exception as e:
 		attempt += 1
-		loop = False if e == KeyboardInterrupt else print("Please enter a valid decimal or integer.")
+		loop = False if e == KeyboardInterrupt else print("Please enter a valid decimal or integer. Do not include symbols")
 
-
-if dividend > 0.5:
-	dividend /= 100
+dividend /= 100
 
 total = price * shares * dividend
 initial_shares = shares
