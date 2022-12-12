@@ -24,53 +24,55 @@ def get_stock_info(symbol):
 		# return 0 if an error occurred
 		return 0
 
+data = []
+
 attempt = 1
 loop = True
 while loop == True:
 	try:
 		print(f"\nAttempt {attempt}")
-		symbol = input("Enter the ASX stock symbol (only Australian stocks or securities are accepted):\n > ")
-		price = float(get_stock_info(symbol)[0])
-		dividend = float(get_stock_info(symbol)[1])
-		dividend /= 100
+		symbol = input("Enter the ASX stock symbol (only Australian stocks or securities are accepted):\n > ").upper()
+		info = get_stock_info(symbol)
+		price = float(info[0])
+		dividend = float(info[1]) / 100
 		shares = float(input("Enter the number of shares you own:\n > "))
+		data.append([symbol, price, dividend, shares, price * shares * dividend])
 		loop = False
 	except Exception as e:
 		attempt += 1
 		loop = False if e == KeyboardInterrupt else print("Please enter a valid decimal or integer.")
 
+initial_shares = data[0][3]
+initial_dividend = data[0][2]
+initial_price = data[0][1]
+initial_total = initial_shares * initial_price
 
-total = price * shares * dividend
-initial_shares = shares
-initial_dividend = dividend
-initial_price = price
-initial_total = shares * price
-
-print(f"\nIf the price does not change at all you will receive roughly ${total:.2f} in dividends per year without reinvestment.\n[{get_stock_info(symbol)[1]}% of ${price:.2f} per share]")
+print(f"\nIf the price does not change at all you will receive roughly ${data[0][4]:.2f} in dividends per year without reinvestment.\n[{data[0][2] * 100}% of ${data[0][1]:.2f} per share]")
 
 cont = input("\nWould you like to reinvest your dividends each year? (y/n)\n > ")
 if cont.lower() == "y":
 	years = int(input("How many years of reinvesting would you like to calculate?\n > "))
 	print(f"\nIf the price does not change at all...")
 	print(f"""{datetime.datetime.now().year}:
-	{shares:.2f} shares
-	Worth ${(shares * price):.2f}
-	${total:.2f} in dividends p.a.""")
+	{data[0][0]}: ${data[0][1]:.2f}
+	{data[0][3]:.2f} shares
+	Worth ${(data[0][3] * data[0][1]):.2f}
+	${data[0][4]:.2f} in dividends p.a.""")
 	for year in range(1, years + 1):
-		shares += total / price
-		total = shares * price * dividend
+		data[0][3] += data[0][4] / data[0][1]
+		data[0][4] = data[0][3] * data[0][1] * data[0][2]
 		print(f"""{datetime.datetime.now().year + year}:
-	{shares:.2f} shares
-	Worth ${(shares * price):.2f}
-	${total:.2f} in dividends p.a.
+	{data[0][3]:.2f} shares
+	Worth ${(data[0][3] * data[0][1]):.2f}
+	${data[0][4]:.2f} in dividends p.a.
 
 	{initial_shares:.2f} initial shares
 	${initial_total:.2f} initial total
-	${(shares * price) - initial_total:.2f} total profit""")
+	${(data[0][3] * data[0][1]) - initial_total:.2f} total profit""")
 elif cont.lower() == "n":
 	years = int(input("How many years would you like to calculate?\n > "))
 	print(f"\nIf the price does not change at all...")
-	total = shares * price * dividend * years
-	print(f"""	{shares:.2f} shares
-	Worth ${(shares * price):.2f}
-	${total:.2f} total dividends""")
+	data[0][4] *= years
+	print(f"""	{data[0][3]:.2f} shares
+	Worth ${(data[0][3] * data[0][1]):.2f}
+	${data[0][4]:.2f} total dividends""")
