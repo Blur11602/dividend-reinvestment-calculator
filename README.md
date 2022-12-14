@@ -14,5 +14,3 @@ It then asks if you want to reinvest the dividends
     - How much they are worth
     - Total estimated dividend payments from all of those years combined
 
-// TODO:
-  - Add an API to search for stocks and automatically get current price
